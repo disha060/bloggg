@@ -57,8 +57,6 @@ void _initBlog() {
 
 
 //Usecases
-
-
     ..registerFactory(
           () =>
           UploadBlog(
@@ -68,6 +66,7 @@ void _initBlog() {
     ..registerFactory(() => GetAllBlogs(serviceLocator(),))
 
     ..registerFactory(()=> EditBlog(serviceLocator(),))
+    ..registerFactory(()=> DeleteBlog(serviceLocator()))
   //Bloc
     ..registerLazySingleton(
             () =>
@@ -75,6 +74,7 @@ void _initBlog() {
               uploadBlog: serviceLocator(),
               getAllBlogs: serviceLocator(),
               editBlog: serviceLocator(),
+              deleteBlog: serviceLocator(),
             )
     )
 
@@ -84,6 +84,7 @@ void _initBlog() {
             serviceLocator(),
             serviceLocator(),
             serviceLocator(),
+            //serviceLocator(),
           ),
     );
 }

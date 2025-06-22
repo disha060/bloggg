@@ -124,5 +124,15 @@ class BlogRepositoryImpl implements BlogRepository{
     }
   }
 
+  @override
+  Future<Either<Failure, void>> deleteBlog(String id) async{
+    try{
+      await blogRemoteDataSource.deleteBlog(id);
+      return right(null);
+    }on ServerException catch(e){
+      return left(Failure(e.message));
+    }
+  }
+
   
 }

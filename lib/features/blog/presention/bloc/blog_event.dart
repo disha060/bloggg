@@ -40,6 +40,10 @@ final class BlogEdit extends BlogEvent {
   });
 }
 
-final class BlogFetchAllBlogs extends BlogEvent{
+final class BlogFetchAllBlogs extends BlogEvent{}
 
+final class BlogDelete extends BlogEvent {
+  final String id;
+
+  BlogDelete({required this.id});
 }

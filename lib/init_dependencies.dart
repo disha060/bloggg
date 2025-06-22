@@ -11,6 +11,7 @@ import 'package:bloggg/features/auth/presentation/auth_bloc.dart';
 import 'package:bloggg/features/blog/data/datasources/blog_remote_data_source.dart';
 import 'package:bloggg/features/blog/data/repositories/blog_repository_impl.dart';
 import 'package:bloggg/features/blog/domain/repositories/blog_repository.dart';
+import 'package:bloggg/features/blog/domain/usecases/delete_blog.dart';
 import 'package:bloggg/features/blog/domain/usecases/get_all_blogs.dart';
 import 'package:bloggg/features/blog/domain/usecases/upload_blog.dart';
 import 'package:get_it/get_it.dart';
