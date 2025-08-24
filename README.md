@@ -33,9 +33,16 @@ Tech Stack
     intl – Date formatting
     internet_connection_checker_plus – Connection status
 
-SCREENSHOTS:
-![WhatsApp Image 2025-08-25![WhatsApp Image 2025-08-25 at 12 01 06 AM](https://github.com/user-attachments/assets/e4174cf2-f461-419a-943c-39adb9594b25)
- at 12 00 16 AM](https://github.com/user-attachments/assets/5c645096-9d8c-4ac6-859e-2f472a2fc44e)
-![WhatsApp Image 2025-08-25 at 12 00 17 AM](https://github.com/user-attachments/assets/88fec316-513c-4ad1-b694-4f4458d33ba9)
-![WhatsApp Image 2025-08-25 at 12 00 17 AM (1)](https://github.com/user-attachments/assets/cf27627e-c089-4e8a-b57d-9c151271c297)
-![WhatsApp Image 2025-08-25 at 12 00 18 AM](https://github.com/user-attachments/assets/a44163ba-42aa-4a5d-8fb2-36a9b385f090)
+## 📱 Screenshots
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/5c645096-9d8c-4ac6-859e-2f472a2fc44e" width="250" />
+  <img src="https://github.com/user-attachments/assets/88fec316-513c-4ad1-b694-4f4458d33ba9" width="250" />
+  <img src="https://github.com/user-attachments/assets/cf27627e-c089-4e8a-b57d-9c151271c297" width="250" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/a44163ba-42aa-4a5d-8fb2-36a9b385f090" width="250" />
+  <img src="https://github.com/user-attachments/assets/e4174cf2-f461-419a-943c-39adb9594b25" width="250" />
+</p>
+
