@@ -14,7 +14,7 @@ Future<void> initDependencies() async{
 
   serviceLocator.registerFactory(()=> InternetConnection());
   //core
-  serviceLocator.registerLazySingleton(()=>AppUserCubit());
+  serviceLocator.registerLazySingleton(()=>AppUserProvider());
 
   serviceLocator.registerFactory<ConnectionChecker>(()=> ConnectionCheckerImpl(serviceLocator(),),);
 
@@ -40,7 +40,7 @@ void _initAuth(){
     ..registerFactory(()=>CurrentUser(serviceLocator()))
 
   //bloc
-    ..registerLazySingleton(()=> AuthBloc(userSignUp: serviceLocator(), userLogin: serviceLocator(), currentUser: serviceLocator(), appUserCubit: serviceLocator()));
+    ..registerLazySingleton(()=> AuthProvider(userSignUp: serviceLocator(), userLogin: serviceLocator(), currentUser: serviceLocator(), appUserProvider: serviceLocator()));
 }
 
 void _initBlog() {
@@ -70,7 +70,7 @@ void _initBlog() {
   //Bloc
     ..registerLazySingleton(
             () =>
-            BlogBloc(
+                BlogProvider(
               uploadBlog: serviceLocator(),
               getAllBlogs: serviceLocator(),
               editBlog: serviceLocator(),

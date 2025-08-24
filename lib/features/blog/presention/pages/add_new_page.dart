@@ -1,16 +1,17 @@
 import 'dart:io';
-import 'package:bloggg/core/common/cubits/app_user/app_user_cubit.dart';
+import 'package:bloggg/core/common/provider/app_user/app_user_provider.dart';
 import 'package:bloggg/core/common/utils/pick_image.dart';
 import 'package:bloggg/core/common/utils/show_snackbar.dart';
-import 'package:bloggg/features/blog/presention/bloc/blog_bloc.dart';
+import 'package:bloggg/features/blog/presention/provider/blog_provider.dart';
 import 'package:bloggg/features/blog/presention/pages/blog_page.dart';
+import 'package:bloggg/features/blog/presention/provider/blog_provider.dart';
 import 'package:bloggg/features/blog/presention/widgets/blog_editor.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
+import 'package:provider/provider.dart';
 
 import '../../../../core/constants/constants.dart';
 import '../../domain/entities/blog.dart';
@@ -64,42 +65,41 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
         throw Exception("Please select at least one topic");
       }
 
-      final posterId = (context.read<AppUserCubit>().state as AppUserLoggedIn).user.id;
+      final posterId = context.read<AppUserProvider>().user?.id ?? '';
+
+      final blogProvider = context.read<BlogProvider>();
 
       if (widget.blogToEdit != null) {
         // EDIT flow
-        final isImageChanged = image != null &&
-            !image!.path.contains('temp_image.jpg');
+        final isImageChanged =
+            image != null && !image!.path.contains('temp_image.jpg');
 
-        context.read<BlogBloc>().add(
-          BlogEdit(
-            id: widget.blogToEdit!.id,
-            image: isImageChanged ? image : null,
-            imageUrl: isImageChanged ? null : widget.blogToEdit!.imageUrl,
-            title: titleController.text.trim(),
-            content: contentController.text.trim(),
-            posterId: posterId,
-            topics: selectedTopics,
-          ),
+        blogProvider.editBlog(
+          id: widget.blogToEdit!.id,
+          image: isImageChanged ? image : null,
+          imageUrl: isImageChanged ? null : widget.blogToEdit!.imageUrl,
+          title: titleController.text.trim(),
+          content: contentController.text.trim(),
+          posterId: posterId,
+          topics: selectedTopics,
         );
       } else {
         // UPLOAD flow
         if (image == null) throw Exception("Please select an image");
 
-        context.read<BlogBloc>().add(
-          BlogUpload(
-            posterId: posterId,
-            title: titleController.text.trim(),
-            content: contentController.text.trim(),
-            image: image!,
-            topics: selectedTopics,
-          ),
+        blogProvider.uploadBlog(
+          posterId: posterId,
+          title: titleController.text.trim(),
+          content: contentController.text.trim(),
+          image: image!,
+          topics: selectedTopics,
         );
       }
     } catch (e) {
       showSnackBar(context, e.toString());
     }
   }
+
   @override
   void initState() {
     super.initState();
@@ -142,75 +142,68 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
     contentController.dispose();
     super.dispose();
   }
-
   @override
   Widget build(BuildContext context) {
-
-    return Scaffold(
-      appBar: AppBar(
-        actions: [
-          IconButton(
-            onPressed: uploadBlog,
-            icon: const Icon(Icons.done_rounded),
-          )
-        ],
-      ),
-      body: BlocConsumer<BlogBloc, BlogState>(
-        listener: (context, state) {
-          if (state is BlogFailure) {
-            showSnackBar(context, state.error);
-          } else if (state is BlogUploadSuccess || state is BlogEditSuccess) {
+    return Consumer<BlogProvider>(
+      builder: (context, blogProvider, _) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (blogProvider.error != null) {
+            showSnackBar(context, blogProvider.error!);
+            blogProvider.resetState();
+          } else if (blogProvider.isSuccess) {
+            blogProvider.resetState();
             Navigator.pushAndRemoveUntil(
               context,
               BlogPage.route(),
                   (route) => false,
             );
           }
-        },
-        builder: (context, state) {
-          if (state is BlogLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
+        });
 
-          return SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Form(
-                key: formKey,
-                child: Column(
-                  children: [
-                    // Image Picker Section
-                    GestureDetector(
-                      onTap: selectImage,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.grey,
-                            width: 1.0,
-                          ),
-                          borderRadius: BorderRadius.circular(5.0),
-                        ),
-                        height: 150,
-                        width: double.infinity,
-                        child: image != null
-                            ? Image.file(image!, fit: BoxFit.cover)
-                            : Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Icon(Icons.folder_open, size: 40),
-                            SizedBox(height: 15),
-                            Text('Select your image', style: TextStyle(fontSize: 15))
-                          ],
-                        ),
+        return Scaffold(
+          appBar: AppBar(
+            actions: [
+              IconButton(
+                onPressed: uploadBlog,
+                icon: const Icon(Icons.done_rounded),
+              )
+            ],
+          ),
+          body: blogProvider.isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Form(
+              key: formKey,
+              child: Column(
+                children: [
+                  GestureDetector(
+                    onTap: selectImage,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey, width: 1.0),
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+                      height: 150,
+                      width: double.infinity,
+                      child: image != null
+                          ? Image.file(image!, fit: BoxFit.cover)
+                          : Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Icon(Icons.folder_open, size: 40),
+                          SizedBox(height: 15),
+                          Text('Select your image', style: TextStyle(fontSize: 15)),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 20),
-
-                    // Topics Section
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: Constants.topics.map((e) => Padding(
+                  ),
+                  const SizedBox(height: 20),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: Constants.topics.map((e) {
+                        return Padding(
                           padding: const EdgeInsets.all(5.0),
                           child: GestureDetector(
                             onTap: () {
@@ -224,35 +217,25 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
                             },
                             child: Chip(
                               label: Text(e),
-                              backgroundColor: selectedTopics.contains(e)
-                                  ? Colors.blue[100]
-                                  : null,
+                              backgroundColor:
+                              selectedTopics.contains(e) ? Colors.blue[100] : null,
                               side: selectedTopics.contains(e)
                                   ? null
                                   : const BorderSide(color: Colors.grey),
                             ),
                           ),
-                        )).toList(),
-                      ),
+                        );
+                      }).toList(),
                     ),
-
-                    // Blog Editor Sections
-                    BlogEditor(
-                      controller: titleController,
-                      hintText: 'Blog title',
-                    ),
-                    const SizedBox(height: 10),
-                    BlogEditor(
-                      controller: contentController,
-                      hintText: 'Blog Content',
-                    ),
-                  ],
-                ),
+                  ),
+                  BlogEditor(controller: titleController, hintText: 'Blog title'),
+                  const SizedBox(height: 10),
+                  BlogEditor(controller: contentController, hintText: 'Blog Content'),
+                ],
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
-  }
-}
+  }}

@@ -1,4 +1,4 @@
-import 'package:bloggg/core/common/cubits/app_user/app_user_cubit.dart';
+import 'package:bloggg/core/common/provider/app_user/app_user_provider.dart';
 import 'package:bloggg/core/network/connection_checker.dart';
 import 'package:bloggg/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:bloggg/features/blog/data/datasources/blog_local_data_source.dart';
@@ -7,7 +7,7 @@ import 'package:bloggg/features/auth/domain/repository/auth_repository.dart';
 import 'package:bloggg/features/auth/domain/usecases/current_user.dart';
 import 'package:bloggg/features/auth/domain/usecases/user_login.dart';
 import 'package:bloggg/features/auth/domain/usecases/user_sign_up.dart';
-import 'package:bloggg/features/auth/presentation/auth_bloc.dart';
+import 'package:bloggg/features/auth/presentation/auth_provider.dart';
 import 'package:bloggg/features/blog/data/datasources/blog_remote_data_source.dart';
 import 'package:bloggg/features/blog/data/repositories/blog_repository_impl.dart';
 import 'package:bloggg/features/blog/domain/repositories/blog_repository.dart';
@@ -21,6 +21,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'core/secrets/app_secrets.dart';
 import 'features/blog/domain/usecases/edit_blog.dart';
-import 'features/blog/presention/bloc/blog_bloc.dart';
+import 'features/blog/presention/provider/blog_provider.dart';
 
 part 'init_dependencies.main.dart';
